@@ -1,0 +1,18 @@
+metabase:
+  # schedule_at: '12 1 * * *' # or 'immediately'
+  schedule_at: MIG_SCHEDULE # default: 'immediately'
+  source:
+    type: frappe_backup
+    endpoint: FC_ENDPOINT
+    username: FC_USERNAME
+    password: FC_PASSWORD
+    include_tables: FC_INCLUDE_TABLES
+    exclude_tables: FC_EXCLUDE_TABLES
+  target:
+    type: mysql_to_postgres
+    host: PG_HOST # default: localhost
+    # port: default: PG_PORT & 5432
+    database: PG_DB_NAME
+    username: PG_USERNAME
+    password: PG_PASSWORD
+    overwrite: PG_OVERWRITE # default: false

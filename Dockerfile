@@ -1,0 +1,26 @@
+FROM ledermann/rails-base-builder:3.2.2-alpine
+
+RUN apk add mariadb mariadb-client mariadb-server-utils
+RUN apk add coreutils
+
+RUN apk add postgresql sbcl curl gawk freetds-dev libzip-dev
+
+RUN cd /tmp/ && git clone https://github.com/dimitri/pgloader.git
+WORKDIR /tmp/pgloader
+RUN make
+
+WORKDIR /app
+RUN rm -rf /etc/periodic
+
+# the base image copies all files from the app directory to /app, which is not for us.
+RUN rm -rf /app/*
+
+COPY lib /app/lib
+COPY conf /app/conf
+COPY bin /app/bin
+RUN rm -f /app/bin/*dev*.*
+
+# The ENTRYPOINT makes the call to the entrypoint.sh script static,
+# while the CMD can be overwritten by start of the container.
+ENTRYPOINT ["/app/bin/entrypoint.sh"]
+CMD ["crond", "-f", "-l", "2"]

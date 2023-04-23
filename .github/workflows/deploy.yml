@@ -52,7 +52,7 @@ jobs:
         uses: actions/delete-package-versions@v4
         with:
           owner: '${{ github.repository_owner }}'
-          package-name: 'mig_frappecloud_bak_to_pg/frappe_db_migrator'
+          package-name: 'frappe_db_migrator/frappe_db_migrator'
           package-type: 'container'
           min-versions-to-keep: 2
           ignore-versions: '^v[0-9]+$'

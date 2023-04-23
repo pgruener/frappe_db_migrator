@@ -1,7 +1,7 @@
 captainVersion: 4
 services:
   '$$cap_appname':
-    image: pgruener/frappe_db_migrator:latest
+    image: ghcr.io/pgruener/frappe_db_migrator/frappe_db_migrator:latest
     environment:
       MIG_SCHEDULE: $$cap_schedule_at
       FC_ENDPOINT: $$cap_frappe_endpoint

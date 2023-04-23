@@ -1,0 +1,60 @@
+captainVersion: 4
+services:
+  '$$cap_appname':
+    image: pgruener/frappe_db_migrator:latest
+    environment:
+      MIG_SCHEDULE: $$cap_schedule_at
+      FC_ENDPOINT: $$cap_frappe_endpoint
+      FC_USERNAME: $$cap_frappe_username
+      FC_PASSWORD: $$cap_frappe_password
+      FC_INCLUDE_TABLES: $$cap_fc_include_tables
+      FC_EXCLUDE_TABLES: $$cap_fc_exclude_tables
+      PG_HOST: $$cap_postgres_host
+      PG_DB_NAME: $$cap_postgres_db_name
+      PG_USERNAME: $$cap_postgres_username
+      PG_PASSWORD: $$cap_postgres_password
+      PG_OVERWRITE: $$cap_postgres_overwrite
+caproverOneClickApp:
+  variables:
+    - id: '$$cap_schedule_at'
+      label: Schedule at
+      defaultValue: 'immediately'
+      description: Can be any valid cron expression or "immediately" (https://crontab.guru/)
+    - id: '$$cap_frappe_endpoint'
+      label: Frappe endpoint URL
+      defaultValue: 'https://xyz.frappe.cloud'
+      description: Can also be a differently hosted frappe instance. (No trailing slash)
+    - id: '$$cap_frappe_username'
+      label: Frappe username
+      description: The username with which the login to frappe is performed (and needs to have the permission to read backups)
+    - id: '$$cap_frappe_password'
+      label: Frappe Password
+    - id: '$$cap_fc_include_tables'
+      label: Included tables (comma separated)
+      description: If empty, all tables are migrated. If not, it expects regular expressions (e.g. `tab[A-Z][a-z]+`) to match the tables to be migrated.
+    - id: '$$cap_fc_exclude_tables'
+      label: Excluded tables (comma separated)
+      description: Additionally to the included tables, these tables options allows it to exclude tables from the list of relevant tables (again via comma separated regexes).
+    - id: '$$cap_postgres_host'
+      label: Postgres destination host
+      description: Defines the IP or Host of the postgres database.
+    - id: '$$cap_postgres_db_name'
+      label: DB name on Postgres
+      defaultValue: 'frappe_import'
+      description: Defines the name of the database on the postgres server on which the data should be transferred to.
+    - id: '$$cap_postgres_username'
+      label: Postgres Username
+      defaultValue: 'frappe_import'
+    - id: '$$cap_postgres_password'
+      label: Postgres Password
+    - id: '$$cap_postgres_overwrite'
+      label: Overwrite existing data
+      defaultValue: 'false'
+      description: Defines, if the database should be overwritten if it's not empty. Warning! The whole database might be deleted, if set to true.
+  instructions:
+    start: |-
+      Downloads Backup from frappe, filters doctypes and imports it into a remote PostgreSQL DB
+  displayName: frappe_db_migrator
+  isOfficial: false
+  description: Downloads Backup from frappe, filters doctypes and imports it into a remote PostgreSQL DB
+  documentation: See https://github.com/pgruener/frappe_db_migrator

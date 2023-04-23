@@ -35,17 +35,18 @@ jobs:
           registry: ${{ env.DOCKER_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build and Push Release to DockerHub
         shell: bash
         run: ./.github/scripts/build_and_push.sh
 
-      - name: Deploy App to CapRover
-        uses: caprover/deploy-from-github@v1.1.2
-        with:
-          app: '${{ env.CAPROVER_APP }}'
-          token: '${{ secrets.DEPLOY_TOKEN_WEB }}'
-          server: '${{ secrets.CAPROVER_SERVER }}'
-          image: '${{ env.FULL_IMAGE_NAME }}'
+      # - name: Deploy App to CapRover
+      #   uses: caprover/deploy-from-github@v1.1.2
+      #   with:
+      #     app: '${{ env.CAPROVER_APP }}'
+      #     token: '${{ secrets.DEPLOY_TOKEN_WEB }}'
+      #     server: '${{ secrets.CAPROVER_SERVER }}'
+      #     image: '${{ env.FULL_IMAGE_NAME }}'
 
       - name: Delete older images
         uses: actions/delete-package-versions@v4

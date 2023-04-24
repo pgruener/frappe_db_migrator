@@ -24,3 +24,5 @@ RUN rm -f /app/bin/*dev*.*
 # while the CMD can be overwritten by start of the container.
 ENTRYPOINT ["/app/bin/entrypoint.sh"]
 CMD ["crond", "-f", "-l", "2"]
+
+# 1st build base

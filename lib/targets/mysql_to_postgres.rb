@@ -69,9 +69,8 @@ module Targets
 
       # import from mysql db called in context[:mysql_imported_db]
       log "Importing from mysql db *#{context[:mysql_imported_db]}* to postgres db *#{get_config(:database)}*"
-      log "/tmp/pgloader/build/bin/pgloader --with \"prefetch rows = 100\" mysql://root@localhost/#{context[:mysql_imported_db]} postgresql://#{get_config(:username)}:#{get_config(:password)}@#{get_config(:host)}/#{get_config(:database)} 2>&1"
-      log `/tmp/pgloader/build/bin/pgloader --with "prefetch rows = 100" mysql://root@localhost/#{context[:mysql_imported_db]} postgresql://#{get_config(:username)}:#{get_config(:password)}@#{get_config(:host)}/#{get_config(:database)} 2>&1`
-      # log `#{pg_command} -c 'ALTER SCHEMA "#{context[:mysql_imported_db]}" RENAME TO "public"' 2>&1`
+      log "PGUSER=\"#{get_config(:username)}\" PGPASSWORD=\"#{get_config(:password)}\" PGHOST=\"#{get_config(:host)}\" /tmp/pgloader/build/bin/pgloader --with \"prefetch rows = 100\" mysql://root@localhost/#{context[:mysql_imported_db]} postgresql:///#{get_config(:database)} 2>&1"
+      log `PGUSER=\"#{get_config(:username)}\" PGPASSWORD=\"#{get_config(:password)}\" PGHOST=\"#{get_config(:host)}\" /tmp/pgloader/build/bin/pgloader --with "prefetch rows = 100" mysql://root@localhost/#{context[:mysql_imported_db]} postgresql:///#{get_config(:database)} 2>&1`
 
       log "Now moving all tables to public schema"
       tables_to_move = context[:mysql_imported_db_selected_tables] || `#{pg_command} -c "select tablename FROM pg_tables WHERE schemaname = '#{context[:mysql_imported_db]}'; 2>&1`.split("\n")

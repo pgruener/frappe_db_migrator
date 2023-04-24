@@ -11,11 +11,8 @@ on:
   push:
     branches: [ "main" ]
 
-  pull_request:
-    branches: [ "main" ]
-
-  paths-ignore:
-    - 'Dockerfile.base'
+    paths-ignore:
+      - "Dockerfile.base"
 
 jobs:
   build-and-deploy:

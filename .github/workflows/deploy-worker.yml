@@ -2,8 +2,8 @@ name: Build & Deploy via caprover
 
 env:
   DOCKER_REGISTRY: ghcr.io
-  DOCKERFILE: ./Dockerfile
-  CAPROVER_APP: frappe_db_migrator
+  DOCKERFILE: ./Dockerfile.worker
+  # CAPROVER_APP: frappe_db_migrator
   CONTEXT_DIR: "./"
   IMAGE_NAME: ${{ github.repository }}/frappe_db_migrator
 
@@ -13,6 +13,9 @@ on:
 
   pull_request:
     branches: [ "main" ]
+
+  paths-ignore:
+    - 'Dockerfile.base'
 
 jobs:
   build-and-deploy:

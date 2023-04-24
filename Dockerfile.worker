@@ -1,0 +1,14 @@
+FROM ghcr.io/pgruener/frappe_db_migrator/frappe_db_migrator_base:latest
+
+# the base image copies all files from the app directory to /app, which is not for us.
+RUN rm -rf /app/*
+
+COPY lib /app/lib
+COPY conf /app/conf
+COPY bin /app/bin
+RUN rm -f /app/bin/*dev*.*
+
+# The ENTRYPOINT makes the call to the entrypoint.sh script static,
+# while the CMD can be overwritten by start of the container.
+ENTRYPOINT ["/app/bin/entrypoint.sh"]
+CMD ["crond", "-f", "-l", "2"]

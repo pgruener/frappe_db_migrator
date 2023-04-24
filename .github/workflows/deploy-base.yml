@@ -1,0 +1,60 @@
+name: Build & Deploy via caprover
+
+env:
+  DOCKER_REGISTRY: ghcr.io
+  DOCKERFILE: ./Dockerfile.base
+  # CAPROVER_APP: frappe_db_migrator
+  CONTEXT_DIR: "./"
+  IMAGE_NAME: ${{ github.repository }}/frappe_db_migrator_base
+
+on:
+  push:
+    branches: [ "main" ]
+
+  pull_request:
+    branches: [ "main" ]
+
+  paths: ['Dockerfile.base']
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          echo "IMAGE_NAME_WITH_REGISTRY=$DOCKER_REGISTRY/$IMAGE_NAME" >> $GITHUB_ENV
+          export IMAGE_NAME_WITH_REGISTRY=$DOCKER_REGISTRY/$IMAGE_NAME
+          echo "FULL_IMAGE_NAME=$IMAGE_NAME_WITH_REGISTRY:$GITHUB_SHA-gitsha" >> $GITHUB_ENV
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Release to DockerHub
+        shell: bash
+        run: ./.github/scripts/build_and_push.sh
+
+      # - name: Deploy App to CapRover
+      #   uses: caprover/deploy-from-github@v1.1.2
+      #   with:
+      #     app: '${{ env.CAPROVER_APP }}'
+      #     token: '${{ secrets.DEPLOY_TOKEN_WEB }}'
+      #     server: '${{ secrets.CAPROVER_SERVER }}'
+      #     image: '${{ env.FULL_IMAGE_NAME }}'
+
+      - name: Delete older images
+        uses: actions/delete-package-versions@v4
+        with:
+          owner: '${{ github.repository_owner }}'
+          package-name: 'frappe_db_migrator/frappe_db_migrator_base'
+          package-type: 'container'
+          min-versions-to-keep: 2
+          ignore-versions: '^v[0-9]+$'

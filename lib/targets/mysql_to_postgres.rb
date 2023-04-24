@@ -76,7 +76,7 @@ module Targets
       tables_to_move = context[:mysql_imported_db_selected_tables] || `#{pg_command} -c "select tablename FROM pg_tables WHERE schemaname = '#{context[:mysql_imported_db]}'; 2>&1`.split("\n")
       tables_to_move.each do |table_to_move|
         log "ALTER TABLE #{table_to_move} SET SCHEMA public;' 2>&1"
-        log `#{pg_command} -c 'ALTER TABLE "#{table_to_move}" SET SCHEMA public;' 2>&1`
+        log `#{pg_command} -c 'ALTER TABLE "#{table_to_move.include?(" ") ? table_to_move : table_to_move.downcase}" SET SCHEMA public;' 2>&1`
       end
 
       success!

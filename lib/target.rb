@@ -60,7 +60,7 @@ class Target
   def run_command
     res = [
       "SPECIFIC_TARGETS=#{ident}",
-      '/app/bin/run_targets.rb'
+      'cd /app && /app/bin/run_targets.rb'
     ]
 
     res.unshift('RUN_IMMEDIATELY_ONES=true') if run_immediately?

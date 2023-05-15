@@ -183,8 +183,8 @@ module Sources
       log `rm -f #{context[:mysql_imported_db_unpacked_file]}`
 
       if context[:mysql_imported_db].present?
-        log `mysql -e "DROP DATABASE #{context[:mysql_imported_db]};"`
-        log "Dropped database #{context[:mysql_imported_db]}"
+        log `mysql -e "DROP DATABASE '#{context[:mysql_imported_db]}';"`
+        log "Dropped mysql database #{context[:mysql_imported_db]}"
       end
     end
   end

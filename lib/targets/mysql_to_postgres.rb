@@ -79,7 +79,7 @@ module Targets
       tables_to_move = context[:mysql_imported_db_selected_tables] || `#{pg_command} -c "select tablename FROM pg_tables WHERE schemaname = '#{context[:mysql_imported_db]}'; 2>&1`.split("\n")
       tables_to_move.each do |table_to_move|
         # the table names are translated to downcase (by pg migration) if no space is in the name.
-        adjusted_table_name = table_to_drop.include?(" ") ? table_to_drop : table_to_drop.downcase
+        adjusted_table_name = table_to_move.include?(" ") ? table_to_move : table_to_move.downcase
 
         log "ALTER TABLE \"#{adjusted_table_name}\" SET SCHEMA public;'"
         log `#{pg_command} -c 'ALTER TABLE "#{adjusted_table_name}" SET SCHEMA public;' 2>&1`

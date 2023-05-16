@@ -57,7 +57,7 @@ module Targets
               log `#{pg_command} -c 'DROP TABLE IF EXISTS public."#{adjusted_table_name}" CASCADE;' 2>&1`
             end
           else
-            tables_to_drop = `#{pg_command} -c "SELECT CONCAT('DROP TABLE \\"', tablename, '\\" CASCADE;') FROM pg_tables
+            tables_to_drop = `#{pg_command} -c "SELECT CONCAT('DROP TABLE public.\\"', tablename, '\\" CASCADE;') FROM pg_tables
                                                                 WHERE schemaname='public'; 2>&1`
             tables_to_drop.split("\n").each do |table_to_drop|
               log "Dropping table *#{table_to_drop}*"
@@ -81,8 +81,8 @@ module Targets
         # the table names are translated to downcase (by pg migration) if no space is in the name.
         adjusted_table_name = table_to_move.include?(" ") ? table_to_move : table_to_move.downcase
 
-        log "ALTER TABLE \"#{adjusted_table_name}\" SET SCHEMA public;'"
-        log `#{pg_command} -c 'ALTER TABLE "#{adjusted_table_name}" SET SCHEMA public;' 2>&1`
+        log "ALTER TABLE \"#{context[:mysql_imported_db]}\".\"#{adjusted_table_name}\" SET SCHEMA public;'"
+        log `#{pg_command} -c 'ALTER TABLE "#{context[:mysql_imported_db]}"."#{adjusted_table_name}" SET SCHEMA public;' 2>&1`
       end
 
       # Remove (now) empty schema

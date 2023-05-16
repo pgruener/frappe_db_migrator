@@ -75,12 +75,12 @@ module Targets
       log "Now moving all tables to public schema"
       tables_to_move = context[:mysql_imported_db_selected_tables] || `#{pg_command} -c "select tablename FROM pg_tables WHERE schemaname = '#{context[:mysql_imported_db]}'; 2>&1`.split("\n")
       tables_to_move.each do |table_to_move|
-        log "ALTER TABLE \"#{table_to_move}\" SET SCHEMA public;' 2>&1"
+        log "ALTER TABLE \"#{table_to_move}\" SET SCHEMA public;'"
         log `#{pg_command} -c 'ALTER TABLE "#{table_to_move.include?(" ") ? table_to_move : table_to_move.downcase}" SET SCHEMA public;' 2>&1`
       end
 
       # Remove (now) empty schema
-      log "DROP SCHEMA \"#{context[:mysql_imported_db]}\" CASCADE;' 2>&1"
+      log "DROP SCHEMA \"#{context[:mysql_imported_db]}\" CASCADE;'"
       log `#{pg_command} -c 'DROP SCHEMA "#{context[:mysql_imported_db]}" CASCADE;' 2>&1`
 
       success!

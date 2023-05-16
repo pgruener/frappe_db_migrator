@@ -50,8 +50,11 @@ module Targets
 
           if context[:mysql_imported_db_selected_tables]
             context[:mysql_imported_db_selected_tables].each do |table_to_drop|
-              log "Dropping table *#{table_to_drop}*"
-              log `#{pg_command} -c 'DROP TABLE IF EXISTS "#{table_to_drop}" CASCADE;' 2>&1`
+              # the table names are translated to downcase (by pg migration) if no space is in the name.
+              adjusted_table_name = table_to_drop.include?(" ") ? table_to_drop : table_to_drop.downcase
+
+              log "Dropping table *public.#{adjusted_table_name}*"
+              log `#{pg_command} -c 'DROP TABLE IF EXISTS public."#{adjusted_table_name}" CASCADE;' 2>&1`
             end
           else
             tables_to_drop = `#{pg_command} -c "SELECT CONCAT('DROP TABLE \\"', tablename, '\\" CASCADE;') FROM pg_tables
@@ -75,8 +78,11 @@ module Targets
       log "Now moving all tables to public schema"
       tables_to_move = context[:mysql_imported_db_selected_tables] || `#{pg_command} -c "select tablename FROM pg_tables WHERE schemaname = '#{context[:mysql_imported_db]}'; 2>&1`.split("\n")
       tables_to_move.each do |table_to_move|
-        log "ALTER TABLE \"#{table_to_move}\" SET SCHEMA public;'"
-        log `#{pg_command} -c 'ALTER TABLE "#{table_to_move.include?(" ") ? table_to_move : table_to_move.downcase}" SET SCHEMA public;' 2>&1`
+        # the table names are translated to downcase (by pg migration) if no space is in the name.
+        adjusted_table_name = table_to_drop.include?(" ") ? table_to_move : table_to_move.downcase
+
+        log "ALTER TABLE \"#{adjusted_table_name}\" SET SCHEMA public;'"
+        log `#{pg_command} -c 'ALTER TABLE "#{adjusted_table_name}" SET SCHEMA public;' 2>&1`
       end
 
       # Remove (now) empty schema
